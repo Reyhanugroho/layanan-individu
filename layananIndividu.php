@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layanan Pulsa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="phone-screen">
+
+        <!-- USSD Response Screen -->
+        <div class="ussd-response" id="ussd-response">
+            <p>PULSA Rp. 0</p>
+            <p>UNL Harian 700MB/hr Rp71,5rb 28Hr?</p>
+            <ol>
+                <li>1. Ya</li>
+                <li>2. HOT DEAL</li>
+                <li>3. UNL Harian</li>
+                <li>4. UNL Nonstop</li>
+                <li>5. Combo</li>
+                <li>6. Kuota</li>
+                <li>7. Hiburan</li>
+                <li>8. Internasional</li>
+                <li>9. Top Up dan Info</li>
+            </ol>
+        </div>
+
+        <!-- Input section for user to type their choice -->
+        <div class="input-section" id="input-section">
+            <input type="number" id="input-box" placeholder="Enter choice" class="input-box">
+            <div class="buttons">
+                <button class="cancel-btn" onclick="cancel()">Batal</button>
+                <button class="send-btn" id="send-btn" onclick="send()">Kirimkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let step = 0;
+
+        function send() {
+            const inputBox = document.getElementById("input-box");
+            const input = inputBox.value;
+
+            // Tahap pertama: user memilih 1 (Ya) langsung ke metode pembayaran
+            if (step === 0 && input === '1') {
+                document.getElementById("ussd-response").innerHTML = `
+                    <p>Pilih metode pembayaran:</p>
+                    <ol>
+                        <li>1. Balance</li>
+                        <li>2. DANA</li>
+                        <li>3. GOPAY</li>
+                        <li>4. OVO</li>
+                        <li>5. SHOPEE</li>
+                        <li>0. Home</li>
+                        <li>99. Back</li>
+                    </ol>
+                `;
+                inputBox.value = '';  
+                step = 2;
+            }
+            // Tahap pertama: user memilih 2 (HOT DEAL)
+            else if (step === 0 && input === '2') {
+                document.getElementById("ussd-response").innerHTML = `
+                    <p>Anda memilih HOT DEAL. Silakan pilih paket:</p>
+                    <ol>
+                        <li>1. UNS 45GB 110rb 30Hr</li>
+                        <li>2. UNS 30GB 77rb 30Hr</li>
+                        <li>3. Kuota 10GB 66rb 30Hr</li>
+                        <li>4. 3GB/hr Rp110rb 28Hr</li>
+                        <li>5. 2GB/hr Rp88rb 28Hr</li>
+                        <li>0. Home</li>
+                        <li>99. Back</li>
+                    </ol>
+                `;
+                inputBox.value = '';  
+                step = 1;
+            } 
+            // Semua pilihan di HOT DEAL langsung menuju metode pembayaran
+            else if (step === 1 && (input === '1' || input === '2' || input === '3' || input === '4' || input === '5')) {
+                document.getElementById("ussd-response").innerHTML = `
+                    <p>Pilih metode pembayaran:</p>
+                    <ol>
+                        <li>1. Balance</li>
+                        <li>2. DANA</li>
+                        <li>3. GOPAY</li>
+                        <li>4. OVO</li>
+                        <li>5. SHOPEE</li>
+                        <li>0. Home</li>
+                        <li>99. Back</li>
+                    </ol>
+                `;
+                inputBox.value = '';  
+                step = 2; 
+            } 
+            // Semua metode pembayaran akan menunjukkan respons yang sama
+            else if (step === 2 && (input === '1' || input === '2' || input === '3' || input === '4' || input === '5')) {
+                document.getElementById("ussd-response").innerHTML = `
+                    <p>Terima kasih, permintaan anda sedang di proses. Harap tunggu SMS untuk detail pembayaran.</p>
+                `;
+                document.getElementById("input-section").style.display = "none";  // Sembunyikan input box
+                step = 3;  // Selesai
+            } 
+            // Menangani opsi '99' untuk kembali ke menu sebelumnya
+            else if (input === '99') {
+                if (step === 1) {
+                    // Kembali ke menu awal
+                    cancel();
+                } else if (step === 2) {
+                    // Kembali ke menu HOT DEAL
+                    document.getElementById("ussd-response").innerHTML = `
+                        <p>Anda memilih HOT DEAL. Silakan pilih paket:</p>
+                        <ol>
+                            <li>1. UNS 45GB 110rb 30Hr</li>
+                            <li>2. UNS 30GB 77rb 30Hr</li>
+                            <li>3. Kuota 10GB 66rb 30Hr</li>
+                            <li>4. 3GB/hr Rp110rb 28Hr</li>
+                            <li>5. 2GB/hr Rp88rb 28Hr</li>
+                            <li>0. Home</li>
+                            <li>99. Back</li>
+                        </ol>
+                    `;
+                    inputBox.value = '';  
+                    step = 1;
+                }
+            }
+            // Menangani opsi '0' untuk kembali ke menu awal dari mana saja (kecuali menu awal)
+            else if (input === '0') {
+                cancel();  // Mengembalikan ke menu awal
+            }
+            else {
+                alert("Pilihan tidak valid. Silakan coba lagi.");
+            }
+        }
+
+        function cancel() {
+            // Reset kembali ke langkah pertama
+            document.getElementById("ussd-response").innerHTML = `
+                <p>PULSA Rp. 0</p>
+                <p>UNL Harian 700MB/hr Rp71,5rb 28Hr?</p>
+                <ol>
+                    <li>1. Ya</li>
+                    <li>2. HOT DEAL</li>
+                    <li>3. UNL Harian</li>
+                    <li>4. UNL Nonstop</li>
+                    <li>5. Combo</li>
+                    <li>6. Kuota</li>
+                    <li>7. Hiburan</li>
+                    <li>8. Internasional</li>
+                    <li>9. Top Up dan Info</li>
+                </ol>
+            `;
+            document.getElementById("input-section").style.display = "flex";  // Tampilkan input box kembali
+            document.getElementById("input-box").value = '';  
+            step = 0;  // Reset step
+        }
+    </script>
+</body>
+</html>
